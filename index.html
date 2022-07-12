@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+</head>
+<body>
+    
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+
+        import * as THREE from './three.module.js';
+        import { OrbitControls } from './OrbitControls.js';
+        import { GLTFLoader } from './GLTFLoader.js';
+       
+        function init() {
+            
+            
+            //Scene
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color("grey");
+
+            //Camera
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.2, 3000);
+            camera.position.set(200, 60, 10);
+
+            //render
+            const renderer = new THREE.WebGLRenderer({antialias: true});
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Model
+            {
+                const loader = new GLTFLoader();
+                loader.load('scene.gltf', function(gltf){
+                    scene.add(gltf.scene);
+                },)
+            }
+            //light
+            {
+                const ambient = new THREE.AmbientLight(0x404040, 10);
+                scene.add(ambient) ;
+            }
+            
+            {
+                const light = new THREE.DirectionalLight(0xffffff, 30);
+                light.position.set(-4, 5, 10);
+                scene.add(light);
+            }
+
+            {
+                const light = new THREE.DirectionalLight(0xffffff, 10);
+                light.position.set(5, 1, -2);
+                scene.add(light);
+            }
+
+            {
+                const light = new THREE.DirectionalLight(0xffffff, 5);
+                light.position.set(2, 0, 5);
+                scene.add(light);
+            }
+            
+            //OrbitControls
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 5;
+            controls.enableDamping = true;
+            controls.rotateSpeed = 1;
+            controls.minDistance = 70;
+            controls.maxDistance = 400;
+
+            // Animate
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera)
+            }
+            animate();
+        }
+
+        init();
+    </script>
+</body>
+</html>
